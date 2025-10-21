@@ -9,8 +9,8 @@
 // @exclude      https://www.torn.com/loader.php*sid=attack&user2ID*
 // @icon         https://www.google.com/s2/favicons?domain=torn.com
 // @connect      api.torn.com
-// @require      https://raw.githubusercontent.com/edlau2/Tampermonkey/master/helpers/Torn-JS-Helpers.js
-// @require      https://raw.githubusercontent.com/edlau2/Tampermonkey/master/helpers/tinysort.js
+// @require      https://raw.githubusercontent.com/n8rade/torn-scripts/refs/heads/main/Torn-JS-Helpers.js
+// @require      https://raw.githubusercontent.com/n8rade/torn-scripts/refs/heads/main/tinysort.js
 // @require      http://code.jquery.com/jquery-3.4.1.min.js
 // @require      http://code.jquery.com/ui/1.12.1/jquery-ui.js
 // @grant        GM_addStyle
