@@ -5,7 +5,6 @@
 // @author       seintz [2460991], finally [2060206], Shade [3129695], Kindly [1956699], Mr_Bob [479620], nao [2669774]
 // @description  show tornstats spies on faction wall page
 // @license      GNU GPLv3
-// @source       https://update.greasyfork.org/scripts/429563/wall-battlestats.user.js
 // @match        https://www.torn.com/factions.php*
 // @match        https://www.torn.com/war.php?step=rankreport&rankID=*
 // @connect      api.torn.com
@@ -14,8 +13,6 @@
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @run-at       document-end
-// @downloadURL https://update.greasyfork.org/scripts/429563/wall-battlestats.user.js
-// @updateURL https://update.greasyfork.org/scripts/429563/wall-battlestats.meta.js
 // ==/UserScript==
 
 (function () {
