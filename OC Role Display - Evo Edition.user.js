@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.1
+// @version      2.4.5.2
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -42,12 +42,12 @@
         //Nothing definitive as of yet, just defining initial values to prevent accidental or other joins. Based on previous cherry-picked runs 60 seems to be a safe floor for now.
             OCName: "Crane Reaction",
             Positions: {
-                "BOMBER": 60,
-                "ENGINEER": 60,
-                "SNIPER": 60,
-                "LOOKOUT": 60,
-                "MUSCLE #1": 60,
-                "MUSCLE #2": 60
+                "BOMBER": 65,
+                "ENGINEER": 64,
+                "SNIPER": 64,
+                "LOOKOUT": 62,
+                "MUSCLE #1": 63,
+                "MUSCLE #2": 63
             }
       },
       {
