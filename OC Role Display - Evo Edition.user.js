@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.3
+// @version      2.4.5.4
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -131,11 +131,11 @@
       },
       {
             OCName: "Honey Trap",
-            Positions: `default_${defaultLevel6}`
+            Positions: `default_${defaultLevel5}`
       },
       {
             OCName: "Leave No Trace",
-            Positions: `default_${defaultLevel5}`
+            Positions: `default_${defaultLevel6}`
       },
       {
             OCName: "Stage Fright",
