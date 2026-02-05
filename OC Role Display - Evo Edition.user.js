@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.4
+// @version      2.4.5.5
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -14,20 +14,9 @@
 (async function() {
     'use strict';
 
-    // Inject pulse animation
+    // Should not use animations to comply with new torn userscript/scraping rules, but should maintain red border around user in role. No idea if this section is even fully needed anymore.
     const style = document.createElement('style');
-    style.innerHTML = `
-    @keyframes pulseRed {
-        0% { box-shadow: 0 0 8px red; }
-        50% { box-shadow: 0 0 18px red; }
-        100% { box-shadow: 0 0 8px red; }
-    }
-    .pulse-border-red {
-        animation: pulseRed 1s infinite;
-    }
-    `;
     document.head.appendChild(style);
-
 
     const defaultLevel6 = 75;
     const defaultLevel5 = 75;
@@ -216,7 +205,6 @@
                     joinBtn.setAttribute('disabled', '');
                 }
             } else if (successChance < required) {
-                slot.classList.add('pulse-border-red');
                 slot.style.outline = '4px solid red';
                 slot.style.outlineOffset = '0px';
             }
