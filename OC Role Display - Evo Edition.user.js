@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.5
+// @version      2.4.5.6
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -30,34 +30,34 @@
         //Level 10 Elaborate
             OCName: "Crane Reaction",
             Positions: {
-                "BOMBER": 64,
-                "ENGINEER": 62,
                 "SNIPER": 65,
                 "LOOKOUT": 64,
-                "MUSCLE #1": 63,
-                "MUSCLE #2": 63
+                "BOMBER": 66,
+                "MUSCLE #1": 64,
+                "ENGINEER": 63,
+                "MUSCLE #2": 64
             }
       },
       {
         //Level 9 Elaborate
             OCName: "Gone Fission",
             Positions: {
-                "BOMBER": 66,
-                "ENGINEER": 62,
                 "HIJACKER": 64,
-                "IMITATOR": 66,
-                "PICKPOCKET": 66
+                "IMITATOR": 68,
+                "BOMBER": 68,
+                "PICKPOCKET": 68,
+                "ENGINEER": 65
             }
       },
       {
         //Level 9 Elaborate
             OCName: "Ace in the Hole",
             Positions: {
-                "HACKER": 67,
-                "DRIVER": 57,
-                "MUSCLE #1": 65,
-                "IMITATOR": 67,
-                "MUSCLE #2": 67
+                "HACKER": 70,
+                "MUSCLE #2": 71,
+                "IMITATOR": 70,
+                "MUSCLE #1": 68,
+                "DRIVER": 57
             }
       },
       {
@@ -74,9 +74,9 @@
         //Level 8 Elaborate
             OCName: "Stacking the Deck",
             Positions: {
-                "HACKER": 65,
                 "IMITATOR": 72,
-                "CAT BURGLAR": 64,
+                "HACKER": 65,
+                "CAT BURGLAR": 65,
                 "DRIVER": 57
             }
       },
@@ -84,33 +84,33 @@
         //Level 8 Advanced
             OCName: "Break the Bank",
             Positions: {
-                "ROBBER": 65,
-                "MUSCLE #1": 65,
-                "THIEF #1": 60,
-                "MUSCLE #2": 65,
                 "MUSCLE #3": 72,
-                "THIEF #2": 72
+                "THIEF #2": 72,
+                "MUSCLE #1": 65,
+                "ROBBER": 65,
+                "MUSCLE #2": 65,
+                "THIEF #1": 60
             }
       },
       {
         //Level 8 Advanced
             OCName: "Clinical Precision",
             Positions: {
-                "ASSASSIN": 65,
-                "CAT BURGLAR": 65,
-                "CLEANER": 65,
                 "IMITATOR": 72,
+                "CLEANER": 65,
+                "CAT BURGLAR": 65,
+                "ASSASSIN": 65
             }
       },
       {
         //Level 7 Advanced
             OCName: "Blast From The Past",
             Positions: {
-                "PICKLOCK #1": 60,
-                "HACKER": 60,
+                "MUSCLE": 75,
                 "ENGINEER": 75,
                 "BOMBER": 60,
-                "MUSCLE": 75,
+                "HACKER": 60,
+                "PICKLOCK #1": 60,
                 "PICKLOCK #2": 60
             }
       },
