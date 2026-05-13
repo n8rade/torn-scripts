@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.6
+// @version      2.4.5.7
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -18,6 +18,7 @@
     const style = document.createElement('style');
     document.head.appendChild(style);
 
+    const defaultLevel7 = 75;
     const defaultLevel6 = 75;
     const defaultLevel5 = 75;
     const defaultLevel4 = 75;
@@ -115,6 +116,10 @@
             }
       },
       {
+            OCName: "Window of Opportunity",
+            Positions: `default_${defaultLevel7}`
+      },
+      {
             OCName: "Bidding War",
             Positions: `default_${defaultLevel6}`
       },
@@ -166,13 +171,13 @@
         if (panel.classList.contains('role-processed')) return;
         panel.classList.add('role-processed');
 
-        const ocName = panel.querySelector('.panelTitle___aoGuV')?.innerText.trim() || "Unknown";
-        const slots = panel.querySelectorAll('.wrapper___Lpz_D');
+        const ocName = panel.querySelector('[class^="panelTitle___"]')?.innerText.trim() || "Unknown";
+        const slots = panel.querySelectorAll('[class^="wrapper___"]');
 
         Array.from(slots).forEach(slot => {
             // get raw role text and chance
-            const roleElem      = slot.querySelector('.title___UqFNy');
-            const chanceElem    = slot.querySelector('.successChance___ddHsR');
+            const roleElem      = slot.querySelector('[class^="title___"]');
+            const chanceElem    = slot.querySelector('[class^="successChance___"]');
             if (!roleElem || !chanceElem) return;
 
             const rawRole       = roleElem.innerText.trim();
@@ -215,10 +220,10 @@
         mutations.forEach(m => {
             m.addedNodes.forEach(node => {
                 if (node.nodeType !== 1) return;
-                if (node.matches('.wrapper___U2Ap7')) {
+                if (node.matches('[class^="wrapper___"]')) {
                     processScenario(node);
                 } else {
-                    node.querySelectorAll?.('.wrapper___U2Ap7').forEach(processScenario);
+                    node.querySelectorAll?.('[class^="wrapper___"]').forEach(processScenario);
                 }
             });
         });
@@ -228,7 +233,7 @@
     observer.observe(targetNode, { childList: true, subtree: true });
 
     window.addEventListener('load', () => {
-        document.querySelectorAll('.wrapper___U2Ap7').forEach(processScenario);
+        document.querySelectorAll('[class^="wrapper___"]').forEach(processScenario);
     });
 
 })();
