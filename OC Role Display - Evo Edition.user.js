@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.7
+// @version      2.4.5.8
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -13,10 +13,6 @@
 // ==/UserScript==
 (async function() {
     'use strict';
-
-    // Should not use animations to comply with new torn userscript/scraping rules, but should maintain red border around user in role. No idea if this section is even fully needed anymore.
-    const style = document.createElement('style');
-    document.head.appendChild(style);
 
     const defaultLevel7 = 75;
     const defaultLevel6 = 75;
@@ -165,16 +161,19 @@
       }
     ];
 
-     const roleMappings = {};
+    const roleMappings = {};
+
+    const q = (s, r = document) => r.querySelector(s);
+    const qa = (s, r = document) => Array.from(r.querySelectorAll(s));
 
     function processScenario(panel) {
         if (panel.classList.contains('role-processed')) return;
         panel.classList.add('role-processed');
 
-        const ocName = panel.querySelector('[class^="panelTitle___"]')?.innerText.trim() || "Unknown";
-        const slots = panel.querySelectorAll('[class^="wrapper___"]');
+        const ocName = q('[class^="panelTitle___"]', panel)?.innerText.trim() || "Unknown";
+        const slots = qa('[class^="contentLayer___"] > [class^="wrapper___"] > [class^="wrapper___"]', panel);
 
-        Array.from(slots).forEach(slot => {
+        slots.forEach((slot) => {
             // get raw role text and chance
             const roleElem      = slot.querySelector('[class^="title___"]');
             const chanceElem    = slot.querySelector('[class^="successChance___"]');
@@ -216,24 +215,12 @@
         });
     }
 
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(m => {
-            m.addedNodes.forEach(node => {
-                if (node.nodeType !== 1) return;
-                if (node.matches('[class^="wrapper___"]')) {
-                    processScenario(node);
-                } else {
-                    node.querySelectorAll?.('[class^="wrapper___"]').forEach(processScenario);
-                }
-            });
-        });
-    });
+    function searchPage() {
+      const orgCrimes = qa('div[class^="wrapper___"][data-oc-id]');
+      orgCrimes.forEach(processScenario);
+    }
 
-    const targetNode = document.querySelector('#factionCrimes-root') || document.body;
-    observer.observe(targetNode, { childList: true, subtree: true });
-
-    window.addEventListener('load', () => {
-        document.querySelectorAll('[class^="wrapper___"]').forEach(processScenario);
-    });
+    const observer = new MutationObserver(() => searchPage());
+    observer.observe(document.body, { childList: true, subtree: true });
 
 })();
