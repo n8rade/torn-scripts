@@ -39,7 +39,7 @@
         //Level 9 Elaborate
             OCName: "Gone Fission",
             Positions: {
-                "HIJACKER": 64,
+                "HIJACKER": 63,
                 "IMITATOR": 68,
                 "BOMBER": 68,
                 "PICKPOCKET": 68,
@@ -50,10 +50,10 @@
         //Level 9 Elaborate
             OCName: "Ace in the Hole",
             Positions: {
-                "HACKER": 70,
+                "HACKER": 71,
                 "MUSCLE #2": 71,
                 "IMITATOR": 70,
-                "MUSCLE #1": 68,
+                "MUSCLE #1": 69,
                 "DRIVER": 57
             }
       },
@@ -61,9 +61,9 @@
         //Level 8 Elaborate
             OCName: "Manifest Cruelty",
             Positions: {
-                "REVIVER": 70,
-                "INTERROGATOR": 70,
-                "HACKER": 65,
+                "REVIVER": 73,
+                "INTERROGATOR": 72,
+                "HACKER": 66,
                 "CAT BURGLAR": 65
             }
       },
@@ -71,49 +71,55 @@
         //Level 8 Elaborate
             OCName: "Stacking the Deck",
             Positions: {
-                "IMITATOR": 72,
-                "HACKER": 65,
-                "CAT BURGLAR": 65,
-                "DRIVER": 57
+                "IMITATOR": 76,
+                "HACKER": 75,
+                "CAT BURGLAR": 75,
+                "DRIVER": 56
             }
       },
       {
         //Level 8 Advanced
             OCName: "Break the Bank",
             Positions: {
-                "MUSCLE #3": 72,
-                "THIEF #2": 72,
-                "MUSCLE #1": 65,
-                "ROBBER": 65,
-                "MUSCLE #2": 65,
-                "THIEF #1": 60
+                "MUSCLE #3": 74,
+                "THIEF #2": 75,
+                "MUSCLE #1": 72,
+                "ROBBER": 72,
+                "MUSCLE #2": 69,
+                "THIEF #1": 67
             }
       },
       {
         //Level 8 Advanced
             OCName: "Clinical Precision",
             Positions: {
-                "IMITATOR": 72,
-                "CLEANER": 65,
-                "CAT BURGLAR": 65,
-                "ASSASSIN": 65
+                "IMITATOR": 76,
+                "CLEANER": 75,
+                "CAT BURGLAR": 72,
+                "ASSASSIN": 66
             }
       },
       {
         //Level 7 Advanced
             OCName: "Blast From The Past",
             Positions: {
-                "MUSCLE": 75,
-                "ENGINEER": 75,
-                "BOMBER": 60,
-                "HACKER": 60,
-                "PICKLOCK #1": 60,
-                "PICKLOCK #2": 60
+                "MUSCLE": 84,
+                "ENGINEER": 84,
+                "BOMBER": 76,
+                "HACKER": 80,
+                "PICKLOCK #1": 81,
+                "PICKLOCK #2": 81
             }
       },
       {
             OCName: "Window of Opportunity",
-            Positions: `default_${defaultLevel7}`
+            Positions: {
+                "LOOTER #2": 81,
+                "MUSCLE #1": 82,
+                "LOOTER #1": 81,
+                "MUSCLE #2": 82,
+                "ENGINEER": 82
+            }
       },
       {
             OCName: "Bidding War",
