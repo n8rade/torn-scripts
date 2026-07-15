@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.5.9
+// @version      2.4.6
 // @description  Color Coding the positions
 // @author       NotIbbyz
 // @match        https://www.torn.com/factions.php?step=your*
@@ -58,6 +58,18 @@
             }
       },
       {
+        //Level 9 Elaborate
+            OCName: "Hostile Takeover",
+            Positions: {
+                "NEGOTIATOR": 72,
+                "KIDNAPPER": 69,
+                "HACKER": 70,
+                "MUSCLE": 70,
+                "ENGINEER": 69,
+                "CAT BURGLAR": 69
+            }
+      },
+      {
         //Level 8 Elaborate
             OCName: "Manifest Cruelty",
             Positions: {
@@ -75,6 +87,17 @@
                 "HACKER": 75,
                 "CAT BURGLAR": 75,
                 "DRIVER": 56
+            }
+      },
+      {
+        //Level 8 Elaborate
+            OCName: "Lock Stock",
+            Positions: {
+                "ASSASSIN": 76,
+                "HACKER": 79,
+                "MUSCLE #1": 79,
+                "MUSCLE #2": 76,
+                "SMUGGLER": 77
             }
       },
       {
