@@ -1,14 +1,10 @@
 // ==UserScript==
 // @name         OC Role Display - Evo Edition
-// @version      2.4.6
+// @version      3.0.0
 // @description  Color Coding the positions
-// @author       NotIbbyz
+// @author       NotIbbyz, Tux [2571279] (Some manual, some OpenCode w/Ollama+Qwen3.8 BUT manually reviewed)
 // @match        https://www.torn.com/factions.php?step=your*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=torn.com
-// @grant        GM_info
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_xmlhttpRequest
 // @license      MIT
 // ==/UserScript==
 (async function() {
@@ -21,11 +17,13 @@
     const defaultLevel3 = 75;
     const defaultLevel2 = 75;
     const defaultDecline = 700;
+    const maxActiveElaborateT9T10 = 6;
 
     const ocRoles = [
       {
-        //Level 10 Elaborate
             OCName: "Crane Reaction",
+            level: 10,
+            cls: "Elaborate",
             Positions: {
                 "SNIPER": 65,
                 "LOOKOUT": 64,
@@ -36,8 +34,9 @@
             }
       },
       {
-        //Level 9 Elaborate
             OCName: "Gone Fission",
+            level: 9,
+            cls: "Elaborate",
             Positions: {
                 "HIJACKER": 63,
                 "IMITATOR": 68,
@@ -47,8 +46,9 @@
             }
       },
       {
-        //Level 9 Elaborate
             OCName: "Ace in the Hole",
+            level: 9,
+            cls: "Elaborate",
             Positions: {
                 "HACKER": 71,
                 "MUSCLE #2": 71,
@@ -58,8 +58,9 @@
             }
       },
       {
-        //Level 9 Elaborate
             OCName: "Hostile Takeover",
+            level: 9,
+            cls: "Elaborate",
             Positions: {
                 "NEGOTIATOR": 72,
                 "KIDNAPPER": 69,
@@ -70,8 +71,9 @@
             }
       },
       {
-        //Level 8 Elaborate
             OCName: "Manifest Cruelty",
+            level: 8,
+            cls: "Elaborate",
             Positions: {
                 "REVIVER": 73,
                 "INTERROGATOR": 72,
@@ -80,8 +82,9 @@
             }
       },
       {
-        //Level 8 Elaborate
             OCName: "Stacking the Deck",
+            level: 8,
+            cls: "Elaborate",
             Positions: {
                 "IMITATOR": 76,
                 "HACKER": 75,
@@ -90,8 +93,9 @@
             }
       },
       {
-        //Level 8 Elaborate
             OCName: "Lock Stock",
+            level: 8,
+            cls: "Elaborate",
             Positions: {
                 "ASSASSIN": 76,
                 "HACKER": 79,
@@ -101,8 +105,9 @@
             }
       },
       {
-        //Level 8 Advanced
             OCName: "Break the Bank",
+            level: 8,
+            cls: "Advanced",
             Positions: {
                 "MUSCLE #3": 74,
                 "THIEF #2": 75,
@@ -113,8 +118,9 @@
             }
       },
       {
-        //Level 8 Advanced
             OCName: "Clinical Precision",
+            level: 8,
+            cls: "Advanced",
             Positions: {
                 "IMITATOR": 76,
                 "CLEANER": 75,
@@ -123,8 +129,9 @@
             }
       },
       {
-        //Level 7 Advanced
             OCName: "Blast From The Past",
+            level: 7,
+            cls: "Advanced",
             Positions: {
                 "MUSCLE": 84,
                 "ENGINEER": 84,
@@ -136,6 +143,8 @@
       },
       {
             OCName: "Window of Opportunity",
+            level: 7,
+            cls: "Advanced",
             Positions: {
                 "LOOTER #2": 81,
                 "MUSCLE #1": 82,
@@ -143,6 +152,12 @@
                 "MUSCLE #2": 82,
                 "ENGINEER": 82
             }
+      },
+      {
+            OCName: "Cleared for Takeoff",
+            level: 7,
+            cls: "Advanced",
+            Positions: `default_${defaultLevel7}`
       },
       {
             OCName: "Bidding War",
@@ -190,18 +205,53 @@
       }
     ];
 
-    const roleMappings = {};
-
     const q = (s, r = document) => r.querySelector(s);
     const qa = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+    // Match the join button by class tokens instead of attribute-starts-with,
+    // so it still works if classes are reordered, extra classes are added, or
+    // hash suffixes are appended (torn.com CSS modules).
+    function isJoinButton(el) {
+        if (!el.classList) return false;
+        const tokens = Array.from(el.classList);
+        const has = (name) => tokens.some(t => t === name || t.startsWith(name));
+        return has('torn-btn') && has('joinButton');
+    }
+
+    function queryJoinButtons(root) {
+        const found = new Set();
+        qa('button', root).forEach(el => { if (isJoinButton(el)) found.add(el); });
+        return Array.from(found);
+    }
+
+    const SELECTORS = {
+        panel: 'div[class^="wrapper___"][data-oc-id]',
+        slots: '[class^="contentLayer___"] > [class^="wrapper___"] > [class^="wrapper___"]',
+        panelTitle: '[class^="panelTitle___"]'
+    };
+
+    function findOC(ocName) {
+        if (!ocName) return undefined;
+        const needle = ocName.toLowerCase();
+        return ocRoles.find(o => o.OCName.toLowerCase() === needle);
+    }
+
+    function panelTitle(panel) {
+        return q(SELECTORS.panelTitle, panel)?.innerText.trim() || "";
+    }
+
+    function assignedUserName(honorTexts) {
+        return honorTexts.length > 1 ? honorTexts[1].textContent.trim() : null;
+    }
 
     function processScenario(panel) {
         if (panel.classList.contains('role-processed')) return;
         panel.classList.add('role-processed');
 
-        const ocName = q('[class^="panelTitle___"]', panel)?.innerText.trim() || "Unknown";
-        const slots = qa('[class^="contentLayer___"] > [class^="wrapper___"] > [class^="wrapper___"]', panel);
+        const ocName = panelTitle(panel) || "Unknown";
+        const slots = qa(SELECTORS.slots, panel);
 
+        const ocData = findOC(ocName);
         slots.forEach((slot) => {
             // get raw role text and chance
             const roleElem      = slot.querySelector('[class^="title___"]');
@@ -210,10 +260,9 @@
 
             const rawRole       = roleElem.innerText.trim();
             const successChance = parseInt(chanceElem.textContent.trim(), 10) || 0;
-            const joinBtn       = slot.querySelector("button[class^='torn-btn joinButton']");
+            const joinBtn       = qa('button', slot).find(el => isJoinButton(el)) || null;
 
             // find thresholds
-            const ocData = ocRoles.find(o => o.OCName.toLowerCase() === ocName.toLowerCase());
             let required = null;
             if (ocData) {
                 if (typeof ocData.Positions === 'string' && ocData.Positions.startsWith('default_')) {
@@ -226,7 +275,7 @@
 
             // detect assigned player
             const honorTexts = slot.querySelectorAll('.honor-text');
-            const userName   = honorTexts.length > 1 ? honorTexts[1].textContent.trim() : null;
+            const userName   = assignedUserName(honorTexts);
 
             // color & disable logic
             if (!userName) {
@@ -234,7 +283,7 @@
                     ? '#ff000061'  // redish
                     : '#21a61c61'; // greenish
                 if (joinBtn && successChance < required) {
-                    joinBtn.textContent="DISABLED";
+                    joinBtn.textContent= `Req ${required}`;
                     joinBtn.setAttribute('disabled', '');
                 }
             } else if (successChance < required) {
@@ -244,12 +293,83 @@
         });
     }
 
-    function searchPage() {
-      const orgCrimes = qa('div[class^="wrapper___"][data-oc-id]');
-      orgCrimes.forEach(processScenario);
+    // A T9/T10 elaborate OC is identified by the level + elaborate class.
+    function isT9T10Elaborate(ocName) {
+        const data = findOC(ocName);
+        return data !== undefined
+            && data.cls === 'Elaborate'
+            && (data.level === 9 || data.level === 10);
     }
 
-    const observer = new MutationObserver(() => searchPage());
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Whether this panel currently has at least one assigned player.
+    function panelHasMember(panel) {
+        return qa(SELECTORS.slots, panel).some(slot => {
+            const honorTexts = slot.querySelectorAll('.honor-text');
+            return assignedUserName(honorTexts) !== null;
+        });
+    }
+
+    function disableJoinForPanel(panel) {
+        qa(SELECTORS.slots, panel).forEach((slot) => {
+            slot.style.backgroundColor = '#8B00C4';
+        });
+        queryJoinButtons(panel).forEach(btn => {
+            btn.textContent = `<=${maxActiveElaborateT9T10} T9+`;
+            btn.setAttribute('disabled', '');
+        });
+    }
+
+    function searchPage() {
+      const orgCrimes = qa(SELECTORS.panel);
+
+      // Pass 1: count active T9/T10 elaborate OCs (ones already populated with people)
+      let activeElaborateCount = 0;
+      orgCrimes.forEach((panel) => {
+        if (isT9T10Elaborate(panelTitle(panel)) && panelHasMember(panel)) {
+            activeElaborateCount++;
+        }
+      });
+
+      // Pass 2: color every panel, then enforce the limit on join buttons of
+      // inactive T9/T10 elaborate OCs when over the cap.
+      const overLimit = activeElaborateCount >= maxActiveElaborateT9T10;
+      orgCrimes.forEach((panel) => {
+        processScenario(panel);
+        if (overLimit && isT9T10Elaborate(panelTitle(panel)) && !panelHasMember(panel)) {
+            disableJoinForPanel(panel);
+        }
+      });
+    }
+
+    let observing = false;
+    const observePage = () => {
+        if (!observing) {
+            observer.observe(document.body, { childList: true, subtree: true });
+            observing = true;
+        }
+    };
+    const unobservePage = () => {
+        if (observing) {
+            observer.disconnect();
+            observing = false;
+        }
+    };
+
+    // Re-running searchPage() mutates the DOM (textContent, attributes), which
+    // would re-trigger this observer and loop forever. Disconnect while we work.
+    const observer = new MutationObserver(() => {
+        unobservePage();
+        try {
+            searchPage();
+        } finally {
+            observePage();
+        }
+    });
+
+    try {
+        searchPage();
+    } finally {
+        observePage();
+    }
 
 })();
