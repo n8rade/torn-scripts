@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Weapon & Armor UID
-// @version      1.0
+// @version      1.0.1
 // @description  Shows each Armoury id on the Items page, Auction House listings, Item Market, Display Case, and Faction Armory, and copies the uid to the clipboard when an item is clicked.
 // @author       Skeletron [318855] (Original Two Scripts Combined) and Ollama+Opencode w/Qwen3.8
 // @match        https://www.torn.com/item.php*
@@ -59,7 +59,6 @@
       li.addEventListener("click", (e) => {
         const el = li.__uidNameEl;
         if (el && (el === e.target || el.contains(e.target))) {
-          e.stopPropagation();
           copyText(li.__uid).catch((err) => {
             console.log(err);
           });
@@ -89,7 +88,7 @@
       return;
     }
     const uid = li.getAttribute("data-armoryid");
-    if (!uid) {
+    if (!/^\d+$/.test(uid || "") || +uid === 0) {
       return;
     }
     const category = (li.getAttribute("data-category") || "").toLowerCase();
@@ -113,7 +112,7 @@
       return;
     }
     const uid = hover.getAttribute("armoury");
-    if (!uid) {
+    if (!/^\d+$/.test(uid || "") || +uid === 0) {
       return;
     }
     const nameEl = li.querySelector(".item-name");
@@ -187,6 +186,9 @@
       return;
     }
     const uid = wrap.getAttribute("data-armoryid");
+    if (!/^\d+$/.test(uid || "") || +uid === 0) {
+      return;
+    }
     const nameEl = item.querySelector("li div.name");
     if (!nameEl) {
       return;
@@ -195,9 +197,24 @@
   };
 
   function observeAnnotate(annotate) {
-    const annotateAll = () => document.body.querySelectorAll("li").forEach(annotate);
-    annotateAll();
-    const observer = new MutationObserver(annotateAll);
+    annotate(document.body.querySelectorAll("li"));
+    const observer = new MutationObserver((mutations) => {
+      const seen = new Set();
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType !== 1) {
+            return;
+          }
+          if (node.tagName === "LI") {
+            seen.add(node);
+          }
+          if (node.querySelectorAll) {
+            node.querySelectorAll("li").forEach((li) => seen.add(li));
+          }
+        });
+      });
+      seen.forEach(annotate);
+    });
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
@@ -256,15 +273,59 @@
     const observer = new MutationObserver(() => annotateDisplayBox());
     observer.observe(document.body, { childList: true, subtree: true });
   } else if (isFaction) {
+    const selector =
+      '[id="tab=armoury&sub=weapons"] > ul.item-list > *, ' +
+      '[id="tab=armoury&sub=armour"] > ul.item-list > *';
+    const scanItems = (root) => {
+      const out = [];
+      if (root && root.matches && root.matches(selector)) {
+        out.push(root);
+      }
+      if (root && root.querySelectorAll) {
+        root.querySelectorAll(selector).forEach((n) => out.push(n));
+      }
+      return out;
+    };
+    const watchArmory = (armory) => {
+      scanItems(armory).forEach(annotateFaction);
+      const observer = new MutationObserver((mutations) => {
+        const seen = new Set();
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType !== 1) {
+              return;
+            }
+            scanItems(node).forEach((item) => seen.add(item));
+          });
+        });
+        seen.forEach(annotateFaction);
+      });
+      observer.observe(armory, { childList: true, subtree: true });
+    };
     const armory = document.querySelector("#faction-armoury");
     if (armory) {
-      const selector =
-        '[id="tab=armoury&sub=weapons"] > ul.item-list > *, ' +
-        '[id="tab=armoury&sub=armour"] > ul.item-list > *';
-      const annotateAll = () => armory.querySelectorAll(selector).forEach(annotateFaction);
-      annotateAll();
-      const observer = new MutationObserver(annotateAll);
-      observer.observe(armory, { childList: true, subtree: true });
+      watchArmory(armory);
+    } else {
+      const bootObserver = new MutationObserver((mutations) => {
+        let found = null;
+        mutations.forEach((mutation) => {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType !== 1 || !node.querySelector) {
+              return;
+            }
+            if (node.id === "faction-armoury") {
+              found = node;
+            } else if (node.querySelector("#faction-armoury")) {
+              found = node.querySelector("#faction-armoury");
+            }
+          });
+        });
+        if (found) {
+          bootObserver.disconnect();
+          watchArmory(found);
+        }
+      });
+      bootObserver.observe(document.body, { childList: true, subtree: true });
     }
   }
 })();
